@@ -1,0 +1,28 @@
+From 3ca6c533a41406863edd7ca63dd741990bb7a92d Mon Sep 17 00:00:00 2001
+From: Per Magnus Veierland <pveierland@gmail.com>
+Date: Mon, 27 Mar 2023 20:11:44 +0800
+Subject: [PATCH] strip parameters from content type to fix:
+ application/json;charset=utf-8
+
+---
+ out/python/openapi_client/api_client.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/out/python/openapi_client/api_client.py b/out/python/openapi_client/api_client.py
+index 86f1149..d74820e 100644
+--- a/out/python/openapi_client/api_client.py
++++ b/out/python/openapi_client/api_client.py
+@@ -916,6 +916,10 @@ class OpenApiResponse(JSONDetector):
+ 
+     def deserialize(self, response: urllib3.HTTPResponse, configuration: Configuration) -> ApiResponse:
+         content_type = response.getheader('content-type')
++
++        if isinstance(content_type, str):
++            content_type = content_type.split(';')[0]
++
+         deserialized_body = unset
+         streamed = response.supports_chunked_reads()
+ 
+-- 
+2.38.4
+
